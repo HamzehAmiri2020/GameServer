@@ -5,6 +5,9 @@
  *      Author: root
  */
 
+int main(int argc, char **argv) {
+
+}
 
 
 
