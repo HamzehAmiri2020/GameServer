@@ -1,6 +1,6 @@
 #include <mongoc/mongoc.h>
 
-int main(int argc, char *argv[]) {
+int connectionMonodbC() {
 	const char *uri_string = "mongodb://localhost:27017";
 	mongoc_uri_t *uri;
 	mongoc_client_t *client;
@@ -12,20 +12,13 @@ int main(int argc, char *argv[]) {
 	bool retval;
 
 /*
-    * Required to initialize libmongoc's internals
-    */
+	    * Required to initialize libmongoc's internals
+	    */
 	mongoc_init();
 
 /*
-    * Optionally get MongoDB URI from command line
-    */
-	if (argc > 1) {
-		uri_string = argv[1];
-	}
-
-/*
-    * Safely create a MongoDB URI object from the given string
-    */
+	    * Safely create a MongoDB URI object from the given string
+	    */
 	uri = mongoc_uri_new_with_error(uri_string, &error);
 	if (!uri) {
 		fprintf(stderr, "failed to parse URI: %s\n"
@@ -34,29 +27,29 @@ int main(int argc, char *argv[]) {
 	}
 
 /*
-    * Create a new client instance
-    */
+	    * Create a new client instance
+	    */
 	client = mongoc_client_new_from_uri(uri);
 	if (!client) {
 		return EXIT_FAILURE;
 	}
 
 /*
-    * Register the application name so we can track it in the profile logs
-    * on the server. This can also be done from the URI (see other examples).
-    */
+	    * Register the application name so we can track it in the profile logs
+	    * on the server. This can also be done from the URI (see other examples).
+	    */
 	mongoc_client_set_appname(client, "connect-example");
 
 /*
-    * Get a handle on the database "db_name" and collection "coll_name"
-    */
+	    * Get a handle on the database "db_name" and collection "coll_name"
+	    */
 	database = mongoc_client_get_database(client, "db_name");
 	collection = mongoc_client_get_collection(client, "db_name", "coll_name");
 
 /*
-    * Do work. This example pings the database, prints the result as JSON and
-    * performs an insert
-    */
+	    * Do work. This example pings the database, prints the result as JSON and
+	    * performs an insert
+	    */
 	command = BCON_NEW("ping", BCON_INT32 (1));
 
 	retval = mongoc_client_command_simple(client, "admin", command, NULL, &reply, &error);
@@ -81,8 +74,8 @@ int main(int argc, char *argv[]) {
 	bson_free(str);
 
 /*
-    * Release our handles and clean up libmongoc
-    */
+	    * Release our handles and clean up libmongoc
+	    */
 	mongoc_collection_destroy(collection);
 	mongoc_database_destroy(database);
 	mongoc_uri_destroy(uri);
@@ -90,4 +83,8 @@ int main(int argc, char *argv[]) {
 	mongoc_cleanup();
 
 	return EXIT_SUCCESS;
+}
+
+int main(int argc, char *argv[]) {
+	connectionMonodbC();
 }
